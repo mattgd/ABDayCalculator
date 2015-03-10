@@ -1,36 +1,40 @@
-var masterDay = 'A'; // Starting Monday day
-var masterDate = new Date(2015, 2, 9); // Starting date
-var todayDate = new Date();
-var day = 'A';
-var verb, finalText;
+var todayDate = new Date(); // Should be A day
+var finalText;
 
 if (isSummer(todayDate)) {
     finalText = "It's your summer break, don't worry about it!";
-} else {
-    while (masterDate <= todayDate) {
-        masterDate.setDate(masterDate.getDate() + 1); // Increment the date
+} else if (isDayOff(todayDate)) {
+    var nextDay = new Date(); // Increment the date
+    nextDay.setDate(todayDate.getDate() + 1);
 
-        // Skip weekends
-        if (masterDate.getDay() != 0 && masterDate.getDay() != 6) {
-            if (day == 'A') {
-                day = 'B';
-            } else {
-                day = 'A';
-            }
+    // Check for summer break. This might be cool if it actually happened.
+    if (isSummer(nextDay)) {
+        finalText = "No school today. I guess that means it's the start of your summer break.";
+    } else {
+        // Get the next school day
+        while (isDayOff(nextDay)) {
+            nextDay.setDate(nextDay.getDate() + 1); // Increment the date
         }
 
-        masterDate.setDate(masterDate.getDate() + 1);
+        finalText = "No school today. The next school day is a"
+
+        if (getDay(nextDay) == 'B') {
+            finalText += "n A day.";
+        } else {
+            finalText += " B day.";
+        }
     }
 
+} else {
     // Convert day to string
-    if (day == 'A') {
+    if (getDay(todayDate) == 'A') {
         day = "n A day.";
     } else {
         day = " B day.";
     }
 
     // Change verb if the time is after 2:03 PM ET.
-    verb = "is";
+    var verb = "is";
     if (todayDate.getUTCHours() >= 18 && todayDate.getUTCMinutes() >= 3) {
         verb = "was";
     }
@@ -38,17 +42,60 @@ if (isSummer(todayDate)) {
     finalText = "Today is " + compileFullDate(todayDate) + " and it " + verb + " a" + day;
 }
 
-// Set the 'day' div to display the date and day
+/* Set the 'day' div to display the date and day */
 $(document).ready(function() {
     $(".day").text(finalText);
 });
 
-// Check if it is summer break
+/* Returns either A or B day */
+function getDay(date) {
+    var masterDate = new Date(2015, 2, 9); // Starting date
+    var day = 'B'; // Starting Monday schedule day
+
+    while (masterDate <= date) {
+        // Skip weekends
+        if (masterDate.getDay() != 0 && masterDate.getDay() != 6 && !isDayOff(masterDate)) {
+            if (day == 'A') {
+                console.log("B");
+                day = 'B';
+            } else {
+                console.log("A");
+                day = 'A';
+            }
+        }
+
+        masterDate.setDate(masterDate.getDate() + 1); // Increment the date
+    }
+    return day;
+}
+
+/* Check if it is summer break. Returns boolean value. */
 function isSummer(date) {
     var summerStart = new Date(2015, 5, 18);
-    var summerEnd = new Date(2015, 8, 1);
+    var summerEnd = new Date(2015, 7, 31);
     if (date >= summerStart && date <= summerEnd) {
         return true;
+    }
+    return false;
+}
+
+/* Check if today is a day off. Returns boolean value. */
+function isDayOff(date) {
+
+    // Check if 'date' is a weekend
+    if (date.getDay() == 0 || date.getDay() == 6) {
+        return true;
+    }
+
+    // Check if 'date' is a schedule day off
+    var daysOff = [ "2015-3-31", "2015-4-1", "2015-4-2", "2015-4-3", "2015-5-25" ];
+    var dayOff;
+    for (i = 0; i < daysOff.length - 1; i++) {
+        dayOff = new Date(daysOff[i]);
+
+        if (dayOff.getFullYear() == date.getFullYear() && dayOff.getMonth() == date.getMonth() && dayOff.getDate() == date.getDate()) {
+            return true;
+        }
     }
     return false;
 }
