@@ -5,9 +5,9 @@ var todayDate = new Date();
 var fullDate = "";
 var day = 'A';
 
-console.log(masterDate + " : " + todayDate);
-
 while (masterDate <= todayDate) {
+    masterDate.setDate(masterDate.getDate() + 1); // Increment the date
+
     // Skip weekends
     if (masterDate.getDay() != 0 && masterDate.getDay() != 6) {
         if (day == 'A') {
@@ -17,7 +17,7 @@ while (masterDate <= todayDate) {
         }
     }
 
-    masterDate++;
+    masterDate.setDate(masterDate.getDate() + 1);
 }
 
 // Convert day to string
@@ -26,6 +26,9 @@ if (day == 'A') {
 } else {
     day = " B day.";
 }
+
+// Make array of days off
+// During summer, say that it is summer
 
 switch(todayDate.getDay()) {
     case 0:
@@ -93,7 +96,13 @@ switch(todayDate.getMonth()) {
 
 fullDate += todayDate.getDate() + ", " + todayDate.getFullYear();
 
+// Change verb if the time is after 2:03 PM ET.
+var verb = "is";
+if (todayDate.getUTCHours() >= 18 && todayDate.getUTCMinutes() >= 3) {
+    verb = "was";
+}
+
 // Set the 'day' div to display the date and day
 $(document).ready(function() {
-    $(".day").text("Today is " + fullDate + " and it is a" + day);
+    $(".day").text("Today is " + fullDate + " and it " + verb + " a" + day);
 });
