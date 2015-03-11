@@ -1,0 +1,26 @@
+html, body {
+    background: #191818;
+    color: #FFF;
+    font-family: 'Raleway', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+div {
+    left: 0;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+div.day {
+    font-size: 2em;
+    top: 50%;
+}
+div.author {
+    top: 96%;
+}
+div.author a {
+     color: #337ab7;
+     text-decoration: none;
+}
+div.author a:hover {
+    text-decoration: underline;
+}

@@ -19,18 +19,18 @@ if (isSummer(todayDate)) {
         finalText = "No school today. The next school day is a"
 
         if (getDay(nextDay) == 'B') {
-            finalText += "n A day.";
+            finalText += "n A-day.";
         } else {
-            finalText += " B day.";
+            finalText += " B-day.";
         }
     }
 
 } else {
     // Convert day to string
     if (getDay(todayDate) == 'A') {
-        day = "n A day.";
+        day = "n A-day.";
     } else {
-        day = " B day.";
+        day = " B-day.";
     }
 
     // Change verb if the time is after 2:03 PM ET.
@@ -168,6 +168,6 @@ function compileFullDate(date) {
             break;
     }
 
-    fullDate += todayDate.getDate() + ", " + todayDate.getFullYear();
+    fullDate += todayDate.getDate() + ", " + todayDate.getFullYear() + ", ";
     return fullDate;
 }
