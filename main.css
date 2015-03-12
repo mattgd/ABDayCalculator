@@ -4,7 +4,7 @@ html, body {
     font-family: 'Raleway', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
-div {
+div.day, div.author {
     left: 0;
     position: absolute;
     text-align: center;
@@ -23,4 +23,19 @@ div.author a {
 }
 div.author a:hover {
     text-decoration: underline;
+}
+div.date {
+    display: inline-block;
+}
+input {
+    height: 27px;
+    vertical-align: top;
+    font-size: 1em;
+    font-family: 'Raleway', sans-serif;
+    width: 224px;
+    border: 0;
+    padding: 5px;
+}
+input:focus {
+    outline: none;
 }
