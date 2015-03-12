@@ -46,31 +46,55 @@ if (isSummer(todayDate)) {
 /* Set the 'day' div to display the date and day */
 $(document).ready(function() {
     $(".day").html(finalText);
+
     $(".date").click(function() {
-        if ($("input").attr("id") != "userDate") {
-            $(".date").html("<input id='userDate' type='text' maxlength='10' onkeyup='addSlashes(this);' placeholder='MM/DD/YYYY'>");
+        //finalText = "<div class='date'></div> was...";
+        $(".day").html(finalText);
+        if ($(".date input").attr("id") != "userDate") {
+            // Create new text input that automatically adds slashes, and only allows numbers
+            $(".date").html("<input id='userDate' type='text' maxlength='10' onkeyup='addSlashes(this);' onkeypress='return event.charCode >= 48 && event.charCode <= 57;' placeholder='MM/DD/YYYY'>");
         } else {
+
+            console.log("HeRE");
+
             $("#userDate").keyup(function() {
+
+                console.log("HeRE");
 
                 // Get the limit from maxlength attribute
                 var limit = parseInt($(this).attr('maxlength'));
-                //get the current text inside the textarea
+
+                // Get the current text inside the textbox
                 var text = $(this).val();
 
+                // Check if the month is greater than 12, set it to 12
                 if (parseInt(text.substr(0, 2)) > 12) {
-                    text = 12 + text.substr(2);
+                    $(this).attr("value", 12 + text.substr(2));
                 }
 
-                //count the number of characters in the text
+                // Get the number of characters in the text variable
                 var chars = text.length;
 
-                //check if there are more characters then allowed
-                if(chars > limit){
-                    //and if there are use substr to get the text before the limit
+                console.log("HeRE");
+
+                // Check if there are more characters than the limit allows
+                if (chars > limit) {
+                    // If there are use, substr to get the text up to the limit
                     var newText = text.substr(0, limit);
 
-                    //and change the current text with the new text
+                    // Replace the current text with the new text
                     $(this).val(newText);
+                }
+
+                // Calculate day, and return to non-input layout
+                if (chars == 10) {
+                    console.log("HeRE");
+
+                    //var dateString = $(this).val().replace("/", "-");
+                    var inputDate = new Date(dateString);
+
+                    finalText = "<div class='date'>" + compileFullDate(inputDate) + "</div>, and it " + verb + " a" + day;
+                    $(".day").html(finalText);
                 }
             });
         }

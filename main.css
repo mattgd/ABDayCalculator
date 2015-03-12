@@ -32,10 +32,22 @@ input {
     vertical-align: top;
     font-size: 1em;
     font-family: 'Raleway', sans-serif;
-    width: 224px;
+    width: 203px;
     border: 0;
     padding: 5px;
 }
 input:focus {
     outline: none;
+}
+::-webkit-input-placeholder {
+    font-size: 0.9em;
+}
+:-moz-placeholder { /* Firefox 18- */
+    font-size: 0.9em;
+}
+::-moz-placeholder {  /* Firefox 19+ */
+    font-size: 0.9em;
+}
+:-ms-input-placeholder {
+    font-size: 0.9em;
 }
