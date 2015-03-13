@@ -17,50 +17,26 @@ if (isSummer(todayDate)) {
             nextDay.setDate(nextDay.getDate() + 1); // Increment the date
         }
 
-        finalText = "No school today. The next school day is a"
-
-        if (getDay(nextDay) == 'B') {
-            finalText += "n A-day.";
-        } else {
-            finalText += " B-day.";
-        }
+        finalText = "No school today. The next school day is " + getDay(nextDay);
     }
 
 } else {
-    // Convert day to string
-    if (getDay(todayDate) == 'A') {
-        day = "n A-day.";
-    } else {
-        day = " B-day.";
-    }
-
     // Change verb if the time is after 2:03 PM ET.
     var verb = "is";
     if (todayDate.getUTCHours() >= 18 && todayDate.getUTCMinutes() >= 3) {
         verb = "was";
     }
 
-    finalText = "<div class='date'>" + compileFullDate(todayDate) + "</div>, and it " + verb + " a" + day;
+    finalText = "<div class='date'>" + compileFullDate(todayDate) + "</div>, and it " + verb + getDay(todayDate);
 }
 
 /* Set the 'day' div to display the date and day */
 $(document).ready(function() {
     $(".day").html(finalText);
 
-    $(".date").click(function() {
-        //finalText = "<div class='date'></div> was...";
-        $(".day").html(finalText);
-        if ($(".date input").attr("id") != "userDate") {
-            // Create new text input that automatically adds slashes, and only allows numbers
-            $(".date").html("<input id='userDate' type='text' maxlength='10' onkeyup='addSlashes(this);' onkeypress='return event.charCode >= 48 && event.charCode <= 57;' placeholder='MM/DD/YYYY'>");
-        } else {
-
-            console.log("HeRE");
-
+    $(".date").live('click', function() {
+        if ($(".date input").attr("id") == "userDate") {
             $("#userDate").keyup(function() {
-
-                console.log("HeRE");
-
                 // Get the limit from maxlength attribute
                 var limit = parseInt($(this).attr('maxlength'));
 
@@ -75,8 +51,6 @@ $(document).ready(function() {
                 // Get the number of characters in the text variable
                 var chars = text.length;
 
-                console.log("HeRE");
-
                 // Check if there are more characters than the limit allows
                 if (chars > limit) {
                     // If there are use, substr to get the text up to the limit
@@ -88,15 +62,23 @@ $(document).ready(function() {
 
                 // Calculate day, and return to non-input layout
                 if (chars == 10) {
-                    console.log("HeRE");
-
-                    //var dateString = $(this).val().replace("/", "-");
+                    var dateString = $(this).val().replace("/", "-");
                     var inputDate = new Date(dateString);
 
-                    finalText = "<div class='date'>" + compileFullDate(inputDate) + "</div>, and it " + verb + " a" + day;
+                    var verb;
+                    if (inputDate < todayDate) {
+                        verb = "was";
+                    } else {
+                        verb = "is";
+                    }
+
+                    finalText = "<div class='date'>" + compileFullDate(inputDate) + "</div> " + verb + getDay(inputDate);
                     $(".day").html(finalText);
                 }
             });
+        } else {
+            // Create new text input that automatically adds slashes, and only allows numbers
+            $(".date").html("<input id='userDate' type='text' maxlength='10' onkeyup='addSlashes(this);' onkeypress='return event.charCode >= 48 && event.charCode <= 57;' placeholder='MM/DD/YYYY'>");
         }
     });
 });
@@ -113,7 +95,7 @@ function addSlashes(input) {
 /* Returns either A or B day */
 function getDay(date) {
     var masterDate = new Date(2015, 2, 9); // Starting date
-    var day = 'B'; // Starting Monday schedule day
+    var day = 'A'; // Starting Monday schedule day
 
     while (masterDate <= date) {
         // Skip weekends
@@ -127,7 +109,12 @@ function getDay(date) {
 
         masterDate.setDate(masterDate.getDate() + 1); // Increment the date
     }
-    return day;
+
+    if (day == 'B') {
+        return " an A-day.";
+    } else {
+        return " a B-day.";
+    }
 }
 
 /* Check if it is summer break. Returns boolean value. */
@@ -188,7 +175,13 @@ function getDayName(date) {
 
 // Make a non-abbreviated string for the date
 function compileFullDate(date) {
-    var fullDate = "Today is " + getDayName(date);
+    var fullDate;
+
+    if (todayDate.getTime() == date.getTime()) {
+        fullDate = "Today is " + getDayName(date);
+    } else {
+        fullDate = getDayName(date);
+    }
 
     // Get the month
     switch(date.getMonth()) {
