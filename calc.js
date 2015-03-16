@@ -5,21 +5,9 @@ var dayName = "";
 if (isSummer(todayDate)) {
     finalText = "It's your summer break, don't worry about it!";
 } else if (isDayOff(todayDate)) {
-    var nextDay = new Date(); // Increment the date
-    nextDay.setDate(todayDate.getDate() + 1);
-
-    // Check for summer break. This might be cool if it actually happened.
-    if (isSummer(nextDay)) {
-        finalText = "No school today. I guess that means it's the start of your summer break.";
-    } else {
-        // Get the next school day
-        while (isDayOff(nextDay)) {
-            nextDay.setDate(nextDay.getDate() + 1); // Increment the date
-        }
-
-        finalText = "No school today. The next school day is " + getDay(nextDay);
-    }
-
+    finalText = getNextValidDay();
+} else if (isSchoolClosed(todayDate)) {
+    finalText = getNextValidDay();
 } else {
     // Change verb if the time is after 2:03 PM ET.
     var verb = "is";
@@ -27,7 +15,7 @@ if (isSummer(todayDate)) {
         verb = "was";
     }
 
-    finalText = "<div class='date'>" + compileFullDate(todayDate) + "</div>, and it " + verb + getDay(todayDate);
+    finalText = "<div class='date'>" + compileFullDateString(todayDate) + "</div>, and it " + verb + getDay(todayDate);
 }
 
 /* Set the 'day' div to display the date and day */
@@ -72,7 +60,7 @@ $(document).ready(function() {
                         verb = "is";
                     }
 
-                    finalText = "<div class='date'>" + compileFullDate(inputDate) + "</div> " + verb + getDay(inputDate);
+                    finalText = "<div class='date'>" + compileFullDateString(inputDate) + "</div> " + verb + getDay(inputDate);
                     $(".day").html(finalText);
                 }
             });
@@ -174,7 +162,7 @@ function getDayName(date) {
 }
 
 // Make a non-abbreviated string for the date
-function compileFullDate(date) {
+function compileFullDateString(date) {
     var fullDate;
 
     if (todayDate.getTime() == date.getTime()) {
@@ -183,46 +171,82 @@ function compileFullDate(date) {
         fullDate = getDayName(date);
     }
 
-    // Get the month
+    fullDate += getMonthName(date) + " " + date.getDate() + ", " + date.getFullYear();
+    return fullDate;
+}
+
+// Get the full month name
+function getMonthName(date) {
+    var monthName;
     switch(date.getMonth()) {
         case 0:
-            fullDate += "January ";
+            monthName = "January";
             break;
         case 1:
-            fullDate += "February ";
+            monthName = "February";
             break;
         case 2:
-            fullDate += "March ";
+            monthName = "March";
             break;
         case 3:
-            fullDate += "April ";
+            monthName = "April";
             break;
         case 4:
-            fullDate += "May ";
+            monthName = "May";
             break;
         case 5:
-            fullDate += "June ";
+            monthName = "June";
             break;
         case 6:
-            fullDate += "July ";
+            monthName = "July";
             break;
         case 7:
-            fullDate += "August ";
+            monthName = "August";
             break;
         case 8:
-            fullDate += "September ";
+            monthName = "September";
             break;
         case 9:
-            fullDate += "October ";
+            monthName = "October";
             break;
         case 10:
-            fullDate += "November ";
+            monthName = "November";
             break;
         case 11:
-            fullDate += "December ";
+            monthName = "December";
             break;
     }
+    return monthName;
+}
 
-    fullDate += date.getDate() + ", " + date.getFullYear();
-    return fullDate;
+function isSchoolClosed(date) {
+    $.ajax({
+        url: 'http://www.hcrhs.k12.nj.us',
+        type: 'GET',
+        success: function(res) {
+            var newsAlert = $(res.responseText).find('.module.news.news-alert li h4').text();
+            if (newsAlert.indexOf("closed") > -1 && newsAlert.indexOf(getMonthDate(date) + date.getDate()) > -1) {
+                return true;
+            }
+        }
+    });
+    return false;
+}
+
+// Finds the next valid day, and returns a text string
+function getNextValidDay() {
+    var nextDay = new Date(); // Increment the date
+    nextDay.setDate(todayDate.getDate() + 1);
+
+    // Check for summer break. This might be cool if it actually happened.
+    if (isSummer(nextDay)) {
+        return "No school today. I guess that means it's the start of your summer break.";
+    } else {
+
+        // Get the next school day
+        while (isDayOff(nextDay)) {
+            nextDay.setDate(nextDay.getDate() + 1); // Increment the date
+        }
+        return "No school today. The next school day is " + getDay(nextDay);
+    }
 }
