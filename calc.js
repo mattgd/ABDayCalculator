@@ -1,26 +1,10 @@
-var todayDate = new Date(); // Should be A day
-var finalText;
-var dayName = "";
-
-if (isSummer(todayDate)) {
-    finalText = "It's your summer break, don't worry about it!";
-} else if (isDayOff(todayDate)) {
-    finalText = getNextValidDay();
-} else if (isSchoolClosed(todayDate)) {
-    finalText = getNextValidDay();
-} else {
-    // Change verb if the time is after 2:03 PM ET.
-    var verb = "is";
-    if (todayDate.getUTCHours() >= 18 && todayDate.getUTCMinutes() >= 3) {
-        verb = "was";
-    }
-
-    finalText = "<div class='date'>" + compileFullDateString(todayDate) + "</div>, and it " + verb + getDay(todayDate);
-}
+var todayDate = new Date(); // The date and time right now
+var finalText; // The full sentence string of the date
+var dayName = ""; // The name of the day (A/B)
 
 /* Set the 'day' div to display the date and day */
 $(document).ready(function() {
-    $(".day").html(finalText);
+    $(".day").html(calculateNextDay(todayDate));
 
     $(".date").live('click', function() {
         if ($(".date input").attr("id") == "userDate") {
@@ -60,8 +44,7 @@ $(document).ready(function() {
                         verb = "is";
                     }
 
-                    finalText = "<div class='date'>" + compileFullDateString(inputDate) + "</div> " + verb + getDay(inputDate);
-                    $(".day").html(finalText);
+                    $(".day").html(calculateNextDay(inputDate));
                 }
             });
         } else {
@@ -161,20 +144,6 @@ function getDayName(date) {
     }
 }
 
-// Make a non-abbreviated string for the date
-function compileFullDateString(date) {
-    var fullDate;
-
-    if (todayDate.getTime() == date.getTime()) {
-        fullDate = "Today is " + getDayName(date);
-    } else {
-        fullDate = getDayName(date);
-    }
-
-    fullDate += getMonthName(date) + " " + date.getDate() + ", " + date.getFullYear();
-    return fullDate;
-}
-
 // Get the full month name
 function getMonthName(date) {
     var monthName;
@@ -219,6 +188,20 @@ function getMonthName(date) {
     return monthName;
 }
 
+// Make a non-abbreviated string for the date
+function compileFullDateString(date) {
+    var fullDate;
+
+    if (todayDate.getTime() == date.getTime()) {
+        fullDate = "Today is " + getDayName(date);
+    } else {
+        fullDate = getDayName(date);
+    }
+
+    fullDate += getMonthName(date) + " " + date.getDate() + ", " + date.getFullYear();
+    return fullDate;
+}
+
 function isSchoolClosed(date) {
     $.ajax({
         url: 'http://www.hcrhs.k12.nj.us',
@@ -249,4 +232,23 @@ function getNextValidDay() {
         }
         return "No school today. The next school day is " + getDay(nextDay);
     }
+}
+
+function calculateNextDay(date) {
+    if (isSummer(date)) {
+        finalText = "It's your summer break, don't worry about it!";
+    } else if (isDayOff(date)) {
+        finalText = getNextValidDay();
+    } else if (isSchoolClosed(date)) {
+        finalText = getNextValidDay();
+    } else {
+        // Change verb if the time is after 2:03 PM ET.
+        var verb = "is";
+        if (date.getUTCHours() >= 18 && date.getUTCMinutes() >= 3) {
+            verb = "was";
+        }
+
+        finalText = "<div class='date'>" + compileFullDateString(date) + "</div>, and it " + verb + getDay(date);
+    }
+    return finalText;
 }
