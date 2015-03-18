@@ -38,7 +38,17 @@ $(document).ready(function() {
 
                     // Converts a key-spammed string to a date string
                     if (dateString.indexOf("/") == -1) {
-                        dateString = dateString.substr(0, 2) + "/" + dateString.substr(4); // First slash
+                        // Check for a maximum month value of December
+                        if (parseInt(dateString.substr(0, 2)) > 12) {
+                            dateString = 12 + dateString.substr(2);
+                        }
+
+                        /*dateString = dateString.substr(0, 2) + "/" + dateString.substr(4); // First slash
+
+                        if (parseInt(dateString.substr(dateString.indexOf("/") + 1, 2)) > 31) {
+                            dateString = 31 + dateString.substr(dateString.indexOf("/") + 4);
+                        }*/
+
                         dateString = dateString.substr(0, 5) + "/" + dateString.substr(5); // Second slash
                     }
 
