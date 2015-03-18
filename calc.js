@@ -4,7 +4,7 @@ var dayName = ""; // The name of the day (A/B)
 
 /* Set the 'day' div to display the date and day */
 $(document).ready(function() {
-    $(".day").html(calculateNextDay(todayDate));
+    $(".day").html(calculateDay(todayDate));
 
     $(".date").live('click', function() {
         if ($(".date input").attr("id") == "userDate") {
@@ -34,17 +34,24 @@ $(document).ready(function() {
 
                 // Calculate day, and return to non-input layout
                 if (chars == 10) {
-                    var dateString = $(this).val().replace("/", "-");
-                    var inputDate = new Date(dateString);
+                    var dateString = $(this).val();
 
+                    // Converts a key-spammed string to a date string
+                    if (dateString.indexOf("/") == -1) {
+                        dateString = dateString.substr(0, 2) + "/" + dateString.substr(4); // First slash
+                        dateString = dateString.substr(0, 5) + "/" + dateString.substr(5); // Second slash
+                    }
+
+                    var inputDate = new Date(dateString);
                     var verb;
+
                     if (inputDate < todayDate) {
                         verb = "was";
                     } else {
                         verb = "is";
                     }
 
-                    $(".day").html(calculateNextDay(inputDate));
+                    $(".day").html(calculateDay(inputDate));
                 }
             });
         } else {
@@ -234,7 +241,7 @@ function getNextValidDay() {
     }
 }
 
-function calculateNextDay(date) {
+function calculateDay(date) {
     if (isSummer(date)) {
         finalText = "It's your summer break, don't worry about it!";
     } else if (isDayOff(date)) {
