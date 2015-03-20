@@ -321,7 +321,7 @@ function getDaysInMonth(month) {
         case 10:
             numberOfDays = 31;
             break;
-        case 11
+        case 11:
             numberOfDays = 30;
             break;
         case 12:
