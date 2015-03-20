@@ -43,13 +43,15 @@ $(document).ready(function() {
                             dateString = 12 + dateString.substr(2);
                         }
 
-                        /*dateString = dateString.substr(0, 2) + "/" + dateString.substr(4); // First slash
+                        /* EXPERIMENTAL AREA
+                        dateString = dateString.substr(0, 2) + "/" + dateString.substr(4); // First slash
 
-                        if (parseInt(dateString.substr(dateString.indexOf("/") + 1, 2)) > 31) {
-                            dateString = 31 + dateString.substr(dateString.indexOf("/") + 4);
-                        }*/
+                        if (parseInt(dateString.substr(dateString.indexOf("/") + 1, 5)) > getDaysInMonth(dateString.substr(0, 2))) {
+                            dateString = dateString + 31 + dateString.substr(dateString.indexOf("/") + 4);
+                        }
 
                         dateString = dateString.substr(0, 5) + "/" + dateString.substr(5); // Second slash
+                        */
                     }
 
                     var inputDate = new Date(dateString);
@@ -280,4 +282,51 @@ function datesEqual(date1, date2) {
         return true;
     }
     return false;
+}
+
+function getDaysInMonth(month) {
+    var numberOfDays;
+    switch (month) {
+        case 1:
+            numberOfDays = 31;
+            break;
+        case 2:
+            if ((dateString.length - 1) % 4 == 0) {
+                numberOfDays = 29;
+            } else {
+                numberOfDays = 28;
+            }
+            break;
+        case 3:
+            numberOfDays = 31;
+            break;
+        case 4:
+            numberOfDays = 30;
+            break;
+        case 5:
+            numberOfDays = 31;
+            break;
+        case 6:
+            numberOfDays = 30;
+            break;
+        case 7:
+            numberOfDays = 31;
+            break;
+        case 8:
+            numberOfDays = 31;
+            break;
+        case 9:
+            numberOfDays = 30;
+            break;
+        case 10:
+            numberOfDays = 31;
+            break;
+        case 11
+            numberOfDays = 30;
+            break;
+        case 12:
+            numberOfDays = 31;
+            break;
+    }
+    return numberOfDays;
 }
