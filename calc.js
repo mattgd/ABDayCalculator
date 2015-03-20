@@ -66,6 +66,7 @@ $(document).ready(function() {
             });
         } else {
             // Create new text input that automatically adds slashes, and only allows numbers
+            $(".day").html("<div class='date'></div> is a...");
             $(".date").html("<input id='userDate' type='text' maxlength='10' onkeyup='addSlashes(this);' onkeypress='return event.charCode >= 48 && event.charCode <= 57;' placeholder='MM/DD/YYYY'>");
         }
     });
@@ -128,7 +129,7 @@ function isDayOff(date) {
     for (i = 0; i < daysOff.length - 1; i++) {
         dayOff = new Date(daysOff[i]);
 
-        if (dayOff.getFullYear() == date.getFullYear() && dayOff.getMonth() == date.getMonth() && dayOff.getDate() == date.getDate()) {
+        if (datesEqual(dayOff, date)) {
             return true;
         }
     }
@@ -209,7 +210,7 @@ function getMonthName(date) {
 function compileFullDateString(date) {
     var fullDate;
 
-    if (todayDate.getTime() == date.getTime()) {
+    if (datesEqual(date, todayDate)) {
         fullDate = "Today is " + getDayName(date);
     } else {
         fullDate = getDayName(date);
@@ -265,7 +266,18 @@ function calculateDay(date) {
             verb = "was";
         }
 
-        finalText = "<div class='date'>" + compileFullDateString(date) + "</div>, and it " + verb + getDay(date);
+        if (datesEqual(date, todayDate)) {
+            finalText = "<div class='date'>" + compileFullDateString(date) + "</div>, and it " + verb + getDay(date);
+        } else {
+            finalText = "<div class='date'>" + compileFullDateString(date) + "</div> " + verb + getDay(date);
+        }
     }
     return finalText;
+}
+
+function datesEqual(date1, date2) {
+    if (date1.getFullYear() == date2.getFullYear() && date1.getMonth() == date2.getMonth() && date1.getDate() == date2.getDate()) {
+        return true;
+    }
+    return false;
 }
