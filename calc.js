@@ -6,14 +6,18 @@ var dayName = ""; // The name of the day (A/B)
 $(document).ready(function() {
     $(".day").html(calculateDay(todayDate));
 
+    var inputChars = 0;
+    var text, chars, newText, limit;
+
     $(".date").live('click', function() {
         if ($(".date input").attr("id") == "userDate") {
+
             $("#userDate").keyup(function() {
                 // Get the limit from maxlength attribute
-                var limit = parseInt($(this).attr('maxlength'));
+                limit = parseInt($(this).attr('maxlength'));
 
                 // Get the current text inside the textbox
-                var text = $(this).val();
+                text = $(this).val();
 
                 // Check if the month is greater than 12, set it to 12
                 if (parseInt(text.substr(0, 2)) > 12) {
@@ -21,12 +25,12 @@ $(document).ready(function() {
                 }
 
                 // Get the number of characters in the text variable
-                var chars = text.length;
+                chars = text.length;
 
                 // Check if there are more characters than the limit allows
                 if (chars > limit) {
                     // If there are use, substr to get the text up to the limit
-                    var newText = text.substr(0, limit);
+                    newText = text.substr(0, limit);
 
                     // Replace the current text with the new text
                     $(this).val(newText);
@@ -44,7 +48,7 @@ $(document).ready(function() {
                         slashPos = dateString.indexOf("/"); // Position of the new first slash
                         dateString = dateString.substr(0, slashPos + 3) + "/" + dateString.substr(slashPos + 3); // Second slash
                     }
-                    
+
                     // Check for a maximum month value of 12 (December)
                     if (parseInt(dateString.substr(0, 2)) > 12) {
                         dateString = 12 + dateString.substr(2);
