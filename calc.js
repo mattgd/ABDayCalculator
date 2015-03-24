@@ -81,16 +81,7 @@ $(document).ready(function() {
     });
 });
 
-function addSlashes(input) {
-    var v = input.value;
-    if (v.match(/^\d{2}$/) !== null) {
-        input.value = v + '/';
-    } else if (v.match(/^\d{2}\/\d{2}$/) !== null) {
-        input.value = v + '/';
-    }
-}
-
-/* Returns either A or B day */
+// Returns if a date is an A day or B day
 function getDay(date) {
     var masterDate = new Date(2015, 2, 9); // Starting date
     var day = 'A'; // Starting Monday schedule day
@@ -115,7 +106,7 @@ function getDay(date) {
     }
 }
 
-/* Check if it is summer break. Returns boolean value. */
+// Returns if a date is during summer break
 function isSummer(date) {
     var summerStart = new Date(2015, 5, 18);
     var summerEnd = new Date(2015, 7, 31);
@@ -125,7 +116,7 @@ function isSummer(date) {
     return false;
 }
 
-/* Check if today is a day off. Returns boolean value. */
+// Returns if a date is a scheduled day off
 function isDayOff(date) {
     // Check if 'date' is a weekend
     if (date.getDay() == 0 || date.getDay() == 6) {
@@ -145,33 +136,53 @@ function isDayOff(date) {
     return false;
 }
 
-function getDayName(date) {
-    switch(date.getDay()) {
-        case 0:
-            return "Sunday, ";
-            break;
-        case 1:
-            return "Monday, ";
-            break;
-        case 2:
-            return "Tuesday, ";
-            break;
-        case 3:
-            return "Wednesday, ";
-            break;
-        case 4:
-            return "Thursday, ";
-            break;
-        case 5:
-            return "Friday, ";
-            break;
-        case 6:
-            return "Saturday, ";
-            break;
-    }
+// Returns if school has an emergency closing on a specified date
+function isSchoolClosed(date) {
+    $.ajax({
+        url: 'http://www.hcrhs.k12.nj.us',
+        type: 'GET',
+        success: function(res) {
+            res = $(res);
+            res.find('img').remove();
+            var newsAlert = $(res.responseText).find('.module.news.news-alert li h4').text();
+            if (newsAlert.indexOf("closed") > -1 && newsAlert.indexOf(getMonthDate(date) + date.getDate()) > -1) {
+                return true;
+            }
+        }
+    });
+    return false;
 }
 
-// Get the full month name
+// Returns the string for the name of the day
+function getDayName(date) {
+    var dayOfWeek;
+    switch(date.getDay()) {
+        case 0:
+            dayOfWeek = "Sunday, ";
+            break;
+        case 1:
+            dayOfWeek = "Monday, ";
+            break;
+        case 2:
+            dayOfWeek = "Tuesday, ";
+            break;
+        case 3:
+            dayOfWeek = "Wednesday, ";
+            break;
+        case 4:
+            dayOfWeek = "Thursday, ";
+            break;
+        case 5:
+            dayOfWeek = "Friday, ";
+            break;
+        case 6:
+            dayOfWeek = "Saturday, ";
+            break;
+    }
+    return dayOfWeek;
+}
+
+// Returns the full month name in English
 function getMonthName(date) {
     var monthName;
     switch(date.getMonth()) {
@@ -215,7 +226,7 @@ function getMonthName(date) {
     return monthName;
 }
 
-// Make a non-abbreviated string for the date
+// Returns a non-abbreviated string for the date in English
 function compileFullDateString(date) {
     var fullDate;
 
@@ -229,23 +240,7 @@ function compileFullDateString(date) {
     return fullDate;
 }
 
-function isSchoolClosed(date) {
-    $.ajax({
-        url: 'http://www.hcrhs.k12.nj.us',
-        type: 'GET',
-        success: function(res) {
-            res = $(res);
-            res.find('img').remove();
-            var newsAlert = $(res.responseText).find('.module.news.news-alert li h4').text();
-            if (newsAlert.indexOf("closed") > -1 && newsAlert.indexOf(getMonthDate(date) + date.getDate()) > -1) {
-                return true;
-            }
-        }
-    });
-    return false;
-}
-
-// Finds the next valid day, and returns a text string
+// Returns a string with the next valid school day
 function getNextValidDay() {
     var nextDay = new Date(); // Increment the date
     nextDay.setDate(todayDate.getDate() + 1);
@@ -263,6 +258,7 @@ function getNextValidDay() {
     }
 }
 
+// Returns the final string to output with the date
 function calculateDay(date) {
     if (isSummer(date)) {
         finalText = "It's your summer break, don't worry about it!";
@@ -286,6 +282,7 @@ function calculateDay(date) {
     return finalText;
 }
 
+// Returns boolean value whether two dates are equal (year, month, day)
 function datesEqual(date1, date2) {
     if (date1.getFullYear() == date2.getFullYear() && date1.getMonth() == date2.getMonth() && date1.getDate() == date2.getDate()) {
         return true;
@@ -293,6 +290,7 @@ function datesEqual(date1, date2) {
     return false;
 }
 
+// Returns the amount of days in a given month
 function getDaysInMonth(month) {
     var numberOfDays;
     switch (month) {
@@ -338,4 +336,14 @@ function getDaysInMonth(month) {
             break;
     }
     return numberOfDays;
+}
+
+// Add a slashes as the user enters a date
+function addSlashes(input) {
+    var v = input.value;
+    if (v.match(/^\d{2}$/) !== null) {
+        input.value = v + '/';
+    } else if (v.match(/^\d{2}\/\d{2}$/) !== null) {
+        input.value = v + '/';
+    }
 }
