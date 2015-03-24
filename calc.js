@@ -38,12 +38,13 @@ $(document).ready(function() {
                     var slashPos = dateString.indexOf("/");
 
                     // Converts a key-spammed string to a date string
-                    if (slashPos == -1) {
+                    if (slashPos == -1 || slashPos == dateString.lastIndexOf("/")) {
+                        dateString.replace("/", ""); // Replace slashes and put them in manually
                         dateString = dateString.substr(0, 2) + "/" + dateString.substr(4); // First slash
                         slashPos = dateString.indexOf("/"); // Position of the new first slash
                         dateString = dateString.substr(0, slashPos + 3) + "/" + dateString.substr(slashPos + 3); // Second slash
                     }
-
+                    
                     // Check for a maximum month value of 12 (December)
                     if (parseInt(dateString.substr(0, 2)) > 12) {
                         dateString = 12 + dateString.substr(2);
@@ -229,6 +230,8 @@ function isSchoolClosed(date) {
         url: 'http://www.hcrhs.k12.nj.us',
         type: 'GET',
         success: function(res) {
+            res = $(res);
+            res.find('img').remove();
             var newsAlert = $(res.responseText).find('.module.news.news-alert li h4').text();
             if (newsAlert.indexOf("closed") > -1 && newsAlert.indexOf(getMonthDate(date) + date.getDate()) > -1) {
                 return true;
