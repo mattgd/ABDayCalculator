@@ -35,23 +35,25 @@ $(document).ready(function() {
                 // Calculate day, and return to non-input layout
                 if (chars == 10) {
                     var dateString = $(this).val();
+                    var slashPos = dateString.indexOf("/");
 
                     // Converts a key-spammed string to a date string
-                    if (dateString.indexOf("/") == -1) {
-                        // Check for a maximum month value of December
-                        if (parseInt(dateString.substr(0, 2)) > 12) {
-                            dateString = 12 + dateString.substr(2);
-                        }
-
-                        /* EXPERIMENTAL AREA
+                    if (slashPos == -1) {
                         dateString = dateString.substr(0, 2) + "/" + dateString.substr(4); // First slash
+                        slashPos = dateString.indexOf("/"); // Position of the new first slash
+                        dateString = dateString.substr(0, slashPos + 3) + "/" + dateString.substr(slashPos + 3); // Second slash
+                    }
 
-                        if (parseInt(dateString.substr(dateString.indexOf("/") + 1, 5)) > getDaysInMonth(dateString.substr(0, 2))) {
-                            dateString = dateString + 31 + dateString.substr(dateString.indexOf("/") + 4);
-                        }
+                    // Check for a maximum month value of 12 (December)
+                    if (parseInt(dateString.substr(0, 2)) > 12) {
+                        dateString = 12 + dateString.substr(2);
+                    }
 
-                        dateString = dateString.substr(0, 5) + "/" + dateString.substr(5); // Second slash
-                        */
+                    var month = parseInt(dateString.substr(0, 2)); // Assign the month to a value
+
+                    // Check for invalid day of the month based on the month entered
+                    if (parseInt(dateString.substr(slashPos + 1, 2)) > getDaysInMonth(month)) {
+                        dateString = dateString.substr(0, 3) + getDaysInMonth(month) + dateString.substr(slashPos + 3);
                     }
 
                     var inputDate = new Date(dateString);
