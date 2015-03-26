@@ -1,2 +1,2 @@
 # ABDayCalculator
-An A/B day schedule calculator. It helps you keep your A/B days straight.
+An A/B day schedule calculator that helps you keep your A/B days straight.
