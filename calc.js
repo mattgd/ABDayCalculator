@@ -265,13 +265,17 @@ function calculateDay(date) {
     } else {
         var verb = "is";
 
-        if (datePassed(date)) {
-            verb = "was";
+        if (date.getTime() > todayDate.getTime()) {
+            verb = "will be";
         } else {
-            verb = "is";
-            // Change verb if the time is after 2:03 PM ET.
-            if (date.getUTCHours() >= 18 && date.getUTCMinutes() >= 3) {
+            if (datePassed(date)) {
                 verb = "was";
+            } else {
+                verb = "is";
+                // Change verb if the time is after 2:03 PM ET.
+                if (date.getUTCHours() >= 18 && date.getUTCMinutes() >= 3) {
+                    verb = "was";
+                }
             }
         }
 
@@ -284,6 +288,7 @@ function calculateDay(date) {
     return finalText;
 }
 
+// Returns if the date entered was during a past Summer Break
 function historicSummer(date) {
     // If the date is in July or August, it must be Summer Break
     if (date.getMonth() == 6 || date.getMonth() == 7) {
