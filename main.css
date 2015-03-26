@@ -1,3 +1,16 @@
+/* Reset */
+html, body, div, h1, h2, h3, p {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+body {
+    line-height: 1;
+}
+/* Actual CSS */
 html, body {
     background: #222;
     color: #FFF;
@@ -18,8 +31,8 @@ div.author {
     top: 96%;
 }
 div.author a {
-     color: #337ab7;
-     text-decoration: none;
+    color: #337ab7;
+    text-decoration: none;
 }
 div.author a:hover {
     text-decoration: underline;
@@ -28,13 +41,13 @@ div.date {
     display: inline-block;
 }
 input {
-    height: 27px;
-    vertical-align: top;
-    font-size: 1em;
-    font-family: 'Raleway', sans-serif;
-    width: 203px;
     border: 0;
+    font-family: 'Raleway', sans-serif;
+    font-size: 1em;
+    height: 27px;
     padding: 5px;
+    vertical-align: top;
+    width: 203px;
 }
 input:focus {
     outline: none;
