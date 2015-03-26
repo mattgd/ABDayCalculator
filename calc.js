@@ -1,4 +1,5 @@
 var todayDate = new Date(); // The date and time right now
+var startDate = new Date('09-03-2014');
 var finalText; // The full sentence string of the date
 var dayName = ""; // The name of the day (A/B)
 
@@ -252,7 +253,10 @@ function getNextValidDay() {
 
 // Returns the final string to output with the date
 function calculateDay(date) {
-    if (isSummer(date)) {
+    // Checks to see if the A/B-day schedule was put in place yet
+    if (date.getTime() < startDate.getTime()) {
+        finalText = "There was no new A/B-day schedule at this time.";
+    } else if (isSummer(date)) {
         finalText = "It's your Summer Break, don't worry about it!";
     } else if (datePassed(date) && historicSummer(date)) {
         finalText = compileFullDateString(date) + " was most-likely during Summer Break.";
