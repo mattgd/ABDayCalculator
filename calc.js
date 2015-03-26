@@ -62,14 +62,6 @@ $(document).ready(function() {
                     }
 
                     var inputDate = new Date(dateString);
-                    var verb;
-
-                    if (inputDate < todayDate) {
-                        verb = "was";
-                    } else {
-                        verb = "is";
-                    }
-
                     $(".day").html(calculateDay(inputDate));
                 }
             });
@@ -262,15 +254,23 @@ function getNextValidDay() {
 function calculateDay(date) {
     if (isSummer(date)) {
         finalText = "It's your summer break, don't worry about it!";
-    } else if (isDayOff(date)) {
-        finalText = getNextValidDay();
-    } else if (isSchoolClosed(date)) {
-        finalText = getNextValidDay();
+    } else if (isDayOff(date) || isSchoolClosed(date)) {
+        if (datePassed(date)) {
+            finalText = "There was no school on " + compileFullDateString(date) + ".";
+        } else {
+            finalText = getNextValidDay();
+        }
     } else {
-        // Change verb if the time is after 2:03 PM ET.
         var verb = "is";
-        if (date.getUTCHours() >= 18 && date.getUTCMinutes() >= 3) {
+
+        if (datePassed(date)) {
             verb = "was";
+        } else {
+            verb = "is";
+            // Change verb if the time is after 2:03 PM ET.
+            if (date.getUTCHours() >= 18 && date.getUTCMinutes() >= 3) {
+                verb = "was";
+            }
         }
 
         if (datesEqual(date, todayDate)) {
@@ -280,6 +280,13 @@ function calculateDay(date) {
         }
     }
     return finalText;
+}
+
+function datePassed(date) {
+    if (date.getTime() < todayDate.getTime()) {
+        return true;
+    }
+    return false;
 }
 
 // Returns boolean value whether two dates are equal (year, month, day)
