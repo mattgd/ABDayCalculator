@@ -39,6 +39,7 @@ div.author a:hover {
 }
 div.date {
     display: inline-block;
+    border-bottom: 1px dotted #FFF;
 }
 input {
     border: 0;
