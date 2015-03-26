@@ -41,6 +41,9 @@ div.date {
     display: inline-block;
     border-bottom: 1px dotted #FFF;
 }
+div.date:hover {
+    cursor: pointer;
+}
 input {
     border: 0;
     font-family: 'Raleway', sans-serif;
