@@ -253,7 +253,9 @@ function getNextValidDay() {
 // Returns the final string to output with the date
 function calculateDay(date) {
     if (isSummer(date)) {
-        finalText = "It's your summer break, don't worry about it!";
+        finalText = "It's your Summer Break, don't worry about it!";
+    } else if (datePassed(date) && historicSummer(date)) {
+        finalText = compileFullDateString(date) + " was most-likely during Summer Break.";
     } else if (isDayOff(date) || isSchoolClosed(date)) {
         if (datePassed(date)) {
             finalText = "There was no school on " + compileFullDateString(date) + ".";
@@ -282,6 +284,15 @@ function calculateDay(date) {
     return finalText;
 }
 
+function historicSummer(date) {
+    // If the date is in July or August, it must be Summer Break
+    if (date.getMonth() == 6 || date.getMonth() == 7) {
+        return true;
+    }
+    return false;
+}
+
+// Returns if the date entered is historic
 function datePassed(date) {
     if (date.getTime() < todayDate.getTime()) {
         return true;
