@@ -62,7 +62,7 @@ function isDayOff(date) {
 function isSchoolClosed(date) {
     var closed = false;
 
-    /*$.ajax({
+    $.ajax({
         async: false,
         url: 'http://www.hcrhs.k12.nj.us',
         type: 'GET',
@@ -76,9 +76,9 @@ function isSchoolClosed(date) {
                 masterDay = 'B';
             }
         }
-    });*/
+    });
 
-    /* EXAMPLE AJAX REQUEST FOR SHOWCASING */
+    /* EXAMPLE AJAX REQUEST FOR LOCAL SHOWCASING
     $.ajax({
         async: false,
         url: 'AlertFormat.html',
@@ -91,7 +91,7 @@ function isSchoolClosed(date) {
                 masterDay = 'B';
             }
         }
-    });
+    });*/
 
     return closed;
 }
