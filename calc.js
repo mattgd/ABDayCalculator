@@ -63,8 +63,10 @@ function isSchoolClosed(date) {
     var closed = false;
 
     /*$.ajax({
+        async: false,
         url: 'http://www.hcrhs.k12.nj.us',
         type: 'GET',
+        dataType : 'html',
         success: function(data) {
             data = $(data);
             data.find('img').remove();
