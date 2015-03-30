@@ -2,82 +2,12 @@ var todayDate = new Date(); // The date and time right now
 var startDate = new Date('09-03-2014');
 var finalText; // The full sentence string of the date
 var dayName = ""; // The name of the day (A/B)
-
-/* Set the 'day' div to display the date and day */
-$(document).ready(function() {
-    $(".day").html(calculateDay(todayDate));
-
-    var inputChars = 0;
-    var text, chars, newText, limit;
-
-    $(".date").live('click', function() {
-        if ($(".date input").attr("id") == "userDate") {
-
-            $("#userDate").keyup(function() {
-                // Get the limit from maxlength attribute
-                limit = parseInt($(this).attr('maxlength'));
-
-                // Get the current text inside the textbox
-                text = $(this).val();
-
-                // Check if the month is greater than 12, set it to 12
-                if (parseInt(text.substr(0, 2)) > 12) {
-                    $(this).attr("value", 12 + text.substr(2));
-                }
-
-                // Get the number of characters in the text variable
-                chars = text.length;
-
-                // Check if there are more characters than the limit allows
-                if (chars > limit) {
-                    // If there are use, substr to get the text up to the limit
-                    newText = text.substr(0, limit);
-
-                    // Replace the current text with the new text
-                    $(this).val(newText);
-                }
-
-                // Calculate day, and return to non-input layout
-                if (chars == 10) {
-                    var dateString = $(this).val();
-                    var slashPos = dateString.indexOf("/");
-
-                    // Converts a key-spammed string to a date string
-                    if (slashPos == -1 || slashPos == dateString.lastIndexOf("/")) {
-                        dateString.replace("/", ""); // Replace slashes and put them in manually
-                        dateString = dateString.substr(0, 2) + "/" + dateString.substr(4); // First slash
-                        slashPos = dateString.indexOf("/"); // Position of the new first slash
-                        dateString = dateString.substr(0, slashPos + 3) + "/" + dateString.substr(slashPos + 3); // Second slash
-                    }
-
-                    // Check for a maximum month value of 12 (December)
-                    if (parseInt(dateString.substr(0, 2)) > 12) {
-                        dateString = 12 + dateString.substr(2);
-                    }
-
-                    var month = parseInt(dateString.substr(0, 2)); // Assign the month to a value
-
-                    // Check for invalid day of the month based on the month entered
-                    if (parseInt(dateString.substr(slashPos + 1, 2)) > getDaysInMonth(month)) {
-                        dateString = dateString.substr(0, 3) + getDaysInMonth(month) + dateString.substr(slashPos + 3);
-                    }
-
-                    var inputDate = new Date(dateString);
-                    $(".day").html(calculateDay(inputDate));
-                }
-            });
-        } else {
-            // Create new text input that automatically adds slashes, and only allows numbers
-            $(".day").html("<div class='date'></div> is a...");
-            $(".date").html("<input id='userDate' type='text' maxlength='10' onkeyup='addSlashes(this);' onkeypress='return event.charCode >= 48 && event.charCode <= 57;' placeholder='MM/DD/YYYY'>");
-        }
-    });
-});
+var masterDay = 'A';
 
 // Returns if a date is an A day or B day
 function getDay(date) {
     var masterDate = new Date(2015, 2, 9); // Starting date
-    var day = 'A'; // Starting Monday schedule day
+    var day = masterDay; // Starting Monday schedule day
 
     while (masterDate <= date) {
         // Skip weekends
@@ -88,7 +18,6 @@ function getDay(date) {
                 day = 'A';
             }
         }
-
         masterDate.setDate(masterDate.getDate() + 1); // Increment the date
     }
 
@@ -131,25 +60,44 @@ function isDayOff(date) {
 
 // Returns if school has an emergency closing on a specified date
 function isSchoolClosed(date) {
-    $.ajax({
+    var closed = false;
+
+    /*$.ajax({
         url: 'http://www.hcrhs.k12.nj.us',
         type: 'GET',
-        success: function(res) {
-            res = $(res);
-            res.find('img').remove();
-            var newsAlert = $(res.responseText).find('.module.news.news-alert li h4').text();
-            if (newsAlert.indexOf("closed") > -1 && newsAlert.indexOf(getMonthDate(date) + date.getDate()) > -1) {
-                return true;
+        success: function(data) {
+            data = $(data);
+            data.find('img').remove();
+            var newsAlert = $(data + '.module.news.news-alert').find('h4').html();
+            if (newsAlert.indexOf("closed") > -1 && newsAlert.indexOf(getMonthName(date) + " " + date.getDate()) > -1) {
+                closed = true;
+                masterDay = 'B';
+            }
+        }
+    });*/
+
+    /* EXAMPLE AJAX REQUEST FOR SHOWCASING */
+    $.ajax({
+        async: false,
+        url: 'AlertFormat.html',
+        type: 'GET',
+        dataType : 'html',
+        success: function(data) {
+            var newsAlert = $(data + '.module.news.news-alert').find('h4').html();
+            if (newsAlert.indexOf("closed") > -1 && newsAlert.indexOf(getMonthName(date) + " " + date.getDate()) > -1) {
+                closed = true;
+                masterDay = 'B';
             }
         }
     });
-    return false;
+
+    return closed;
 }
 
 // Returns the string for the name of the day
 function getDayName(date) {
     var dayOfWeek;
-    switch(date.getDay()) {
+    switch (date.getDay()) {
         case 0:
             dayOfWeek = "Sunday, ";
             break;
@@ -240,14 +188,14 @@ function getNextValidDay() {
 
     // Check for summer break. This might be cool if it actually happened.
     if (isSummer(nextDay)) {
-        return "No school today. I guess that means it's the start of your summer break.";
+        return "<div class='date'>No school today.</div> I guess that means it's the start of your summer break.";
     } else {
 
         // Get the next school day
         while (isDayOff(nextDay)) {
             nextDay.setDate(nextDay.getDate() + 1); // Increment the date
         }
-        return "No school today. The next school day is " + getDay(nextDay);
+        return "<div class='date'>No school today.</div> The next school day will be " + getDay(nextDay);
     }
 }
 
@@ -374,3 +322,74 @@ function addSlashes(input) {
         input.value = v + '/';
     }
 }
+
+/* Set the 'day' div to display the date and day */
+$(document).ready(function() {
+    $(".day").html(calculateDay(todayDate));
+
+    var inputChars = 0;
+    var text, chars, newText, limit;
+
+    $(".date").live('click', function() {
+        if ($(".date input").attr("id") == "userDate") {
+
+            $("#userDate").keyup(function() {
+                // Get the limit from maxlength attribute
+                limit = parseInt($(this).attr('maxlength'));
+
+                // Get the current text inside the textbox
+                text = $(this).val();
+
+                // Check if the month is greater than 12, set it to 12
+                if (parseInt(text.substr(0, 2)) > 12) {
+                    $(this).attr("value", 12 + text.substr(2));
+                }
+
+                // Get the number of characters in the text variable
+                chars = text.length;
+
+                // Check if there are more characters than the limit allows
+                if (chars > limit) {
+                    // If there are use, substr to get the text up to the limit
+                    newText = text.substr(0, limit);
+
+                    // Replace the current text with the new text
+                    $(this).val(newText);
+                }
+
+                // Calculate day, and return to non-input layout
+                if (chars == 10) {
+                    var dateString = $(this).val();
+                    var slashPos = dateString.indexOf("/");
+
+                    // Converts a key-spammed string to a date string
+                    if (slashPos == -1 || slashPos == dateString.lastIndexOf("/")) {
+                        dateString.replace("/", ""); // Replace slashes and put them in manually
+                        dateString = dateString.substr(0, 2) + "/" + dateString.substr(4); // First slash
+                        slashPos = dateString.indexOf("/"); // Position of the new first slash
+                        dateString = dateString.substr(0, slashPos + 3) + "/" + dateString.substr(slashPos + 3); // Second slash
+                    }
+
+                    // Check for a maximum month value of 12 (December)
+                    if (parseInt(dateString.substr(0, 2)) > 12) {
+                        dateString = 12 + dateString.substr(2);
+                    }
+
+                    var month = parseInt(dateString.substr(0, 2)); // Assign the month to a value
+
+                    // Check for invalid day of the month based on the month entered
+                    if (parseInt(dateString.substr(slashPos + 1, 2)) > getDaysInMonth(month)) {
+                        dateString = dateString.substr(0, 3) + getDaysInMonth(month) + dateString.substr(slashPos + 3);
+                    }
+
+                    var inputDate = new Date(dateString);
+                    $(".day").html(calculateDay(inputDate));
+                }
+            });
+        } else {
+            // Create new text input that automatically adds slashes, and only allows numbers
+            $(".day").html("<div class='date'></div> is a...");
+            $(".date").html("<input id='userDate' type='text' maxlength='10' onkeyup='addSlashes(this);' onkeypress='return event.charCode >= 48 && event.charCode <= 57;' placeholder='MM/DD/YYYY'>");
+        }
+    });
+});
